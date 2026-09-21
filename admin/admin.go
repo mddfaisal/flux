@@ -93,6 +93,18 @@ var (
 			chart.draw(data, options);
 		}
   	</script>
+	<style>
+		.kv_get{
+			display: flex;
+			padding: 10px;
+		}
+		.kv_get input {
+			width: 300px;
+		}
+		.kv_get {
+			padding: 10px;
+		}
+	</style>
 <body>
 	<div class="w3-container w3-blue">
 		<h1>{{.Title}}</h1>
@@ -100,14 +112,71 @@ var (
 	<div class="w3-container">
 		<div class="w3-grid" style="grid-template-columns:3fr 1fr">
 			<div class="w3-container">
-				<div class="w3-panel w3-border">
+				<div class="w3-panel w3-border w3-container">
 					<h5><b>Key Value Pair Operations</b></h5>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Get">
+						<button class="w3-button w3-blue">Submit</button>
+						<div id="kv_crud_response"></div>
+					</div>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Key">
+						<input class="w3-input w3-border" type="text" placeholder="Value">
+						<button class="w3-button w3-blue">Submit</button>
+					</div>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Delete Key">
+						<button class="w3-button w3-blue">Delete</button>
+						<div id="kv_crud_response"></div>
+					</div>
 				</div>
 				<div class="w3-panel w3-border">
 					<h5><b>Pub/Sub Operations</b></h5>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Create Topic">
+						<button class="w3-button w3-blue">Create</button>
+						<div id="create_topic"></div>
+					</div>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Delete Topic">
+						<button class="w3-button w3-blue">Delete</button>
+						<div id="delete_topic"></div>
+					</div>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Add Consumer">
+						<button class="w3-button w3-blue">Add</button>
+						<div id="add_consumer"></div>
+					</div>
+					<div class="kv_get">
+						<input class="w3-input w3-border" type="text" placeholder="Remove Consumer">
+						<button class="w3-button w3-blue">Remove</button>
+						<div id="remove_consumer"></div>
+					</div>
 				</div>
 				<div class="w3-panel w3-border">
 					<h5><b>Pub/Sub Metrics</b></h5>
+					<table class="w3-table w3-bordered">
+						<tr class="w3-blue">
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Points</th>
+						</tr>
+						<tr>
+							<td>Jill</td>
+							<td>Smith</td>
+							<td>50</td>
+						</tr>
+						<tr>
+							<td>Eve</td>
+							<td>Jackson</td>
+							<td>94</td>
+						</tr>
+						<tr>
+							<td>Adam</td>
+							<td>Johnson</td>
+							<td>67</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 			<div class="w3-container">

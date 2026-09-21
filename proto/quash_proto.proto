@@ -81,21 +81,21 @@ message RemoveTopicResponse{
     string response = 1;
 }
 
-message AddSubscriberRequest{
+message AddConsumerRequest{
     string topic_name = 1;
 }
 
-message AddSubscriberResponse{
+message AddConsumerResponse{
     string response = 1;
-    string subscriber_id = 2;
+    string consumer_id = 2;
 }
 
-message RemoveSubscriberRequest{
+message RemoveConsumerRequest{
     string topic_name = 1;
-    string subscriber_id = 2;
+    string consumer_id = 2;
 }
 
-message RemoveSubscriberResponse{
+message RemoveConsumerResponse{
     string response = 1;
 }
 
@@ -107,8 +107,8 @@ service QuashService {
 
     rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
     rpc RemoveTopic(RemoveTopicRequest) returns (RemoveTopicResponse);
-    rpc AddSubscriber(AddSubscriberRequest) returns (AddSubscriberResponse);
-    rpc RemoveSubscriber(RemoveSubscriberRequest) returns (RemoveSubscriberResponse);
+    rpc AddConsumer(AddConsumerRequest) returns (AddConsumerResponse);
+    rpc RemoveConsumer(RemoveConsumerRequest) returns (RemoveConsumerResponse);
 
     rpc Publish(stream PublishRequest) returns (stream PublishResponse);
     rpc Consume(stream ConsumeRequest) returns (stream ConsumeResponse);
