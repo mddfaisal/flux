@@ -5,8 +5,8 @@ import (
 	"io"
 	"sync"
 
-	quash_proto "github.com/mddfaisal/quash/proto"
-	"github.com/mddfaisal/quash/utils"
+	quash_proto "github.com/mddfaisal/flux/proto"
+	"github.com/mddfaisal/flux/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -3,10 +3,10 @@ package server
 import (
 	"net"
 
-	"github.com/mddfaisal/quash/admin"
-	pb "github.com/mddfaisal/quash/proto"
-	"github.com/mddfaisal/quash/server/quashserver"
-	"github.com/mddfaisal/quash/utils"
+	"github.com/mddfaisal/flux/admin"
+	pb "github.com/mddfaisal/flux/proto"
+	"github.com/mddfaisal/flux/server/quashserver"
+	"github.com/mddfaisal/flux/utils"
 	"google.golang.org/grpc"
 )
 

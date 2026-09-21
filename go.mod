@@ -1,4 +1,4 @@
-module github.com/mddfaisal/quash
+module github.com/mddfaisal/flux
 
 go 1.25.4
 

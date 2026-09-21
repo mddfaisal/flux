@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/mddfaisal/quash/proto"
-	"github.com/mddfaisal/quash/server/queue"
-	"github.com/mddfaisal/quash/structs"
-	"github.com/mddfaisal/quash/utils"
+	pb "github.com/mddfaisal/flux/proto"
+	"github.com/mddfaisal/flux/server/queue"
+	"github.com/mddfaisal/flux/structs"
+	"github.com/mddfaisal/flux/utils"
 	grpc "google.golang.org/grpc"
 )
 

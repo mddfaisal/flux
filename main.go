@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/mddfaisal/quash/server"
+	"github.com/mddfaisal/flux/server"
 )
 
 func main() {

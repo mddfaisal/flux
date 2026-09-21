@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mddfaisal/quash/proto"
-	quash_proto "github.com/mddfaisal/quash/proto"
+	"github.com/mddfaisal/flux/proto"
+	quash_proto "github.com/mddfaisal/flux/proto"
 )
 
 func Test_SetKV(t *testing.T) {
