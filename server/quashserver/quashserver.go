@@ -39,8 +39,14 @@ func Snapshot() structs.SrvData {
 	brokersLock.Unlock()
 
 	return structs.SrvData{
-		KVMapLength: kvLen,
-		Topics:      topics,
+		KVMapLength:    kvLen,
+		Topics:         topics,
+		SystemRamUsage: utils.SystemRamUsage(),
+		HeapAllocMB:    utils.GoProcessMemoryUsage().HeapAllocMB,
+		TotalAllocMB:   utils.GoProcessMemoryUsage().TotalAllocMB,
+		SysMB:          utils.GoProcessMemoryUsage().SysMB,
+		NumGC:          utils.GoProcessMemoryUsage().NumGC,
+		CPUUsage:       utils.SystemCPUUsage(),
 	}
 }
 

@@ -29,39 +29,69 @@ var (
 	<script type="text/javascript">` + utils.JQuery + `</script>
 	<script type="text/javascript">` + utils.Loder_Js + `</script>
 	<script type="text/javascript">
+		google.charts.load('current', {'packages':['gauge']});
+      	google.charts.setOnLoadCallback(drawSystemRamUsage);
+      	google.charts.setOnLoadCallback(drawCPUUsage);
+      	google.charts.setOnLoadCallback(drawFluxRamUsage);
 		const ws = new WebSocket("ws://localhost:6301/ws/admin");
 		ws.onmessage = (e) => {
 			const metrics = JSON.parse(e.data);
 			console.log("live queue metrics:", metrics);
+			if (metrics.system_ram_usage) {
+				drawSystemRamUsage(metrics.system_ram_usage)
+			}
+			if (metrics.heap_alloc_mb) {
+				drawFluxRamUsage(metrics.heap_alloc_mb)
+			}
+			if (metrics.cpu_usage) {
+				drawCPUUsage(metrics.cpu_usage)
+			}
+			document.getElementById("process_info").innerHTML =
+			'<p>Total Alloc MB: '+metrics.total_alloc_mb+' | SysMB: '+metrics.sys_mb+' | NumGC: '+metrics.num_gc+'</p>';
 		};
-		google.charts.load('current', {'packages':['gauge']});
-      	google.charts.setOnLoadCallback(drawChart);
-		function drawSystemRamUsage() {}
-		function drawCPUUsage() {}
-		function drawFluxRamUsage() {}
-		function drawChart() {
+		function drawSystemRamUsage(e) {
 			var data = google.visualization.arrayToDataTable([
 				['Label', 'Value'],
-				['RAM', 80],
-				['CPU', 55],
+				['RAM(%)', e],
 			]);
 			var options = {
-				// width: 600, height: 400,
+				width: 200, height: 200,
 				redFrom: 80, redTo: 100,
 				yellowFrom:75, yellowTo: 80,
 				minorTicks: 5
 			};
-			var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+			var chart = new google.visualization.Gauge(document.getElementById('system_ram_usage'));
 			chart.draw(data, options);
-			setInterval(function() {
-				data.setValue(0, 1, 40 + Math.round(60 * Math.random()));
-				chart.draw(data, options);
-			}, 13000);
-			setInterval(function() {
-				data.setValue(1, 1, 40 + Math.round(60 * Math.random()));
-				chart.draw(data, options);
-			}, 5000);
-      	}
+		}
+		function drawFluxRamUsage(e) {
+			var data = google.visualization.arrayToDataTable([
+				['Label', 'Value'],
+				['Flux heap (MB)', e],
+			]);
+			var options = {
+				width: 200, height: 200,
+				redFrom: 400, redTo: 512,
+				yellowFrom: 250, yellowTo: 400,
+				minorTicks: 5,
+				max: 512
+			};
+			var chart = new google.visualization.Gauge(document.getElementById('flux_memory_usage'));
+			chart.draw(data, options);
+		}
+		function drawCPUUsage(e) {
+			var data = google.visualization.arrayToDataTable([
+				['Label', 'Value'],
+				['CPU(%)', e],
+			]);
+			var options = {
+				width: 200, height: 200,
+				redFrom: 80, redTo: 100,
+				yellowFrom:75, yellowTo: 80,
+				minorTicks: 5
+			};
+			var chart = new google.visualization.Gauge(document.getElementById('cpu_usage'));
+			chart.draw(data, options);
+		}
   	</script>
 <body>
 	<div class="w3-container w3-blue">
@@ -69,9 +99,31 @@ var (
 	</div>
 	<div class="w3-container">
 		<div class="w3-grid" style="grid-template-columns:3fr 1fr">
-			<div class="w3-container"><p>1fr</p></div>
 			<div class="w3-container">
-				<div id="chart_div"></div>
+				<div class="w3-panel w3-border">
+					<h5><b>Key Value Pair Operations</b></h5>
+				</div>
+				<div class="w3-panel w3-border">
+					<h5><b>Pub/Sub Operations</b></h5>
+				</div>
+				<div class="w3-panel w3-border">
+					<h5><b>Pub/Sub Metrics</b></h5>
+				</div>
+			</div>
+			<div class="w3-container">
+				<div class="w3-panel w3-border">
+					<div id="system_ram_usage"></div>
+					<p>System Ram Usage</p>
+				</div>
+				<div class="w3-panel w3-border">
+					<div id="flux_memory_usage"></div>
+					<div id="process_info"></div>
+					<p>Flux Memory Usage</p>
+				</div>
+				<div class="w3-panel w3-border">
+					<div id="cpu_usage"></div>
+					<p>CPU Usage</p>
+				</div>
 			</div>
 		</div>
 	</div>

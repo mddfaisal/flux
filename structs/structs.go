@@ -24,8 +24,14 @@ type SubscriptionID string
 //
 // It's now a plain, already-safe snapshot: topic name -> subscriber count.
 type SrvData struct {
-	KVMapLength int64                       `json:"kv_map_length"`
-	Topics      map[string]map[string]int64 `json:"topics"`
+	KVMapLength    int64                       `json:"kv_map_length"`
+	Topics         map[string]map[string]int64 `json:"topics"`
+	SystemRamUsage float64                     `json:"system_ram_usage"`
+	HeapAllocMB    uint64                      `json:"heap_alloc_mb"`
+	TotalAllocMB   uint64                      `json:"total_alloc_mb"`
+	SysMB          uint64                      `json:"sys_mb"`
+	NumGC          uint32                      `json:"num_gc"`
+	CPUUsage       float64                     `json:"cpu_usage"`
 }
 
 type AdminResponse struct {

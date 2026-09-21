@@ -3,6 +3,12 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"runtime"
+	"time"
+
+	"github.com/mddfaisal/flux/structs"
+	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/mem"
 )
 
 const (
@@ -420,4 +426,25 @@ func SubscriptionID() string {
 	b := make([]byte, 16)
 	rand.Read(b)
 	return hex.EncodeToString(b)
+}
+
+func SystemRamUsage() float64 {
+	v, _ := mem.VirtualMemory()
+	return v.UsedPercent
+}
+
+func GoProcessMemoryUsage() structs.SrvData {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	return structs.SrvData{
+		HeapAllocMB:  m.Alloc / 1024 / 1024,
+		TotalAllocMB: m.TotalAlloc / 1024 / 1024,
+		SysMB:        m.Sys / 1024 / 1024,
+		NumGC:        m.NumGC,
+	}
+}
+
+func SystemCPUUsage() float64 {
+	percent, _ := cpu.Percent(time.Second, false) // false = overall, true = per-core
+	return percent[0]
 }
