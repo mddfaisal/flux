@@ -19,10 +19,8 @@ import (
 var (
 	kvLock      = &sync.Mutex{}
 	brokersLock = &sync.Mutex{}
-
-	kvMap = map[string]structs.KVValue{}
-
-	brokers = map[structs.Topic]map[structs.SubscriptionID]*queue.Queue{}
+	kvMap       = map[string]structs.KVValue{}
+	brokers     = map[structs.Topic]map[structs.SubscriptionID]*queue.Queue{}
 )
 
 func Snapshot() structs.SrvData {
@@ -124,6 +122,16 @@ func (s *Server) AddSubscriber(ctx context.Context, req *pb.AddSubscriberRequest
 	}, nil
 }
 
+func (s *Server) RemoveSubscriber(ctx context.Context, req *pb.RemoveSubscriberRequest) (*pb.RemoveSubscriberResponse, error) {
+	brokersLock.Lock()
+	defer brokersLock.Unlock()
+	delete(brokers[structs.Topic(req.TopicName)], structs.SubscriptionID(req.SubscriberId))
+	log.Printf("RemovedSubscriber, Topic Name=%v, Subscriber ID=%v\n", req.TopicName, req.SubscriberId)
+	return &pb.RemoveSubscriberResponse{
+		Response: "Removed: " + fmt.Sprintf("%v", req.SubscriberId),
+	}, nil
+}
+
 func (s *Server) Publish(stream grpc.BidiStreamingServer[pb.PublishRequest, pb.PublishResponse]) error {
 	for {
 		req, err := stream.Recv()
@@ -148,7 +156,7 @@ func (s *Server) Publish(stream grpc.BidiStreamingServer[pb.PublishRequest, pb.P
 	}
 }
 
-func (s *Server) Subscribe(stream grpc.BidiStreamingServer[pb.SubscribeRequest, pb.SubscribeResponse]) error {
+func (s *Server) Consume(stream grpc.BidiStreamingServer[pb.ConsumeRequest, pb.ConsumeResponse]) error {
 	req, err := stream.Recv()
 	if err == io.EOF {
 		return nil
@@ -162,7 +170,7 @@ func (s *Server) Subscribe(stream grpc.BidiStreamingServer[pb.SubscribeRequest, 
 	count := int(q.Count())
 	for i := 0; i < count; i++ {
 		val := q.Pop()
-		if err := stream.Send(&pb.SubscribeResponse{Response: val}); err == nil {
+		if err := stream.Send(&pb.ConsumeResponse{Response: val}); err == nil {
 			log.Printf("Message: %v, send to Subscriber: %v", val, req.SubscriberId)
 		} else {
 			return err

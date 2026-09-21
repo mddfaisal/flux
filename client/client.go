@@ -103,6 +103,22 @@ func AddSubscriber(ctx context.Context, req *quash_proto.AddSubscriberRequest) (
 	return resp, err
 }
 
+func RemoveSubscriber(ctx context.Context, req *quash_proto.RemoveSubscriberRequest) (*quash_proto.RemoveSubscriberResponse, error) {
+	lock.Lock()
+	conn, err := grpc.Dial(utils.QuashDb, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	defer func() {
+		conn.Close()
+		lock.Unlock()
+	}()
+	if err != nil {
+		return nil, err
+	}
+	client := quash_proto.NewQuashServiceClient(conn)
+	resp, err := client.RemoveSubscriber(ctx, req)
+	return resp, err
+
+}
+
 func Publish(topicName string, req, resp chan string) error {
 	lock.Lock()
 	conn, err := grpc.Dial(utils.QuashDb, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -149,15 +165,7 @@ func Publish(topicName string, req, resp chan string) error {
 	}
 }
 
-// Subscribe sends the topic/subscriberID handshake exactly once, then
-// streams every subsequently published value into resp until the topic
-// is removed, the connection drops, or the caller cancels.
-//
-// REDESIGN: the old signature took a `req chan string` that the caller
-// had to keep sending the subscriber ID into just to receive the next
-// message — a pull-per-message model that isn't real pub/sub. Now the
-// handshake is a single value and everything after it is server push.
-func Subscribe(topicName, subscriberID string, resp chan string) error {
+func Consume(topicName, subscriberID string, resp chan string) error {
 	lock.Lock()
 	conn, err := grpc.Dial(utils.QuashDb, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -168,20 +176,17 @@ func Subscribe(topicName, subscriberID string, resp chan string) error {
 		conn.Close()
 		lock.Unlock()
 	}()
-	// BUG FIX: resp was never closed, so a `for r := range resp` reader
-	// on the caller's side would block forever after this function
-	// returned. Closing it here lets that goroutine exit cleanly.
 	if resp != nil {
 		defer close(resp)
 	}
 
 	client := quash_proto.NewQuashServiceClient(conn)
-	stream, err := client.Subscribe(context.Background())
+	stream, err := client.Consume(context.Background())
 	if err != nil {
 		return err
 	}
 
-	if err := stream.Send(&quash_proto.SubscribeRequest{
+	if err := stream.Send(&quash_proto.ConsumeRequest{
 		TopicName:    topicName,
 		SubscriberId: subscriberID,
 	}); err != nil {
